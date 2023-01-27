@@ -1,0 +1,19 @@
+﻿@page
+.Website.Pages;
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">BAU Web Dashboard</h1>
+</div>
+
+<div>
+@foreach (var patient in Model.Patients)
+{
+    <div class="card">
+    <h6 class="card-title">@patient</h6>
+    </div>
+}
+</div>
