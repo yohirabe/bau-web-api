@@ -9,7 +9,7 @@ namespace BAUPatientAPI.Website.Pages
     {
         private readonly ILogger<IndexModel> _logger;
         public JsonFilePatientService PatientService;
-        public IEnumerable<Patient> Patients { get; private set; }
+        public IEnumerable<Patient>? Patients { get; private set; }
         public IndexModel(
             ILogger<IndexModel> logger, 
             JsonFilePatientService patientService)

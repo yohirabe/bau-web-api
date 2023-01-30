@@ -1,0 +1,17 @@
+﻿@using BAUPatientAPI.Website.Models
+@using BAUPatientAPI.Website.Services
+@using Microsoft.AspNetCore.Components.Web
+@inject JsonFilePatientService PatientService
+
+<div>
+    @foreach (var patient in PatientService.GetPatients())
+    {
+        <div class="card">
+            <h6 class="card-title">@patient</h6>
+        </div>
+    }
+</div>
+
+@code {
+    
+}
