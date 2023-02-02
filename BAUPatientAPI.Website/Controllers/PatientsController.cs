@@ -13,7 +13,8 @@ namespace BAUPatientAPI.Website.Controllers
     [ApiController]
     public class PatientsController : ControllerBase
     {
-        public PatientsController(JsonFilePatientService patientService)
+        // TODO: Replace JSON file service here with repository service when repository is implemented.
+        public PatientsController(JsonFilePatientService patientService) 
         {
             this.PatientService = patientService;
         }
@@ -23,6 +24,7 @@ namespace BAUPatientAPI.Website.Controllers
         [HttpGet()]
         public IEnumerable<Patient> Get()
         {
+            // returns an empty IEnumerable if there are no patients
             return PatientService.GetPatients();
         }
 
@@ -42,7 +44,6 @@ namespace BAUPatientAPI.Website.Controllers
         [HttpGet("incidents")]
         public IEnumerable<string> GetIncidents()
         {
-            // Gets all unique incident numbers from patient database.
             return PatientService.GetIncidents();
         }
 

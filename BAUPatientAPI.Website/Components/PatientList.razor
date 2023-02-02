@@ -1,17 +1,43 @@
 ﻿@using BAUPatientAPI.Website.Models
 @using BAUPatientAPI.Website.Services
 @using Microsoft.AspNetCore.Components.Web
+@using System.Text;
 @inject JsonFilePatientService PatientService
 
 <div>
     @foreach (var patient in PatientService.GetPatients())
     {
         <div class="card">
-            <h6 class="card-title">@patient</h6>
+            <div class="card-body">
+                <h5 class="card-title"
+                style="font-weight: bold">
+                    Status @patient.StatusNumber
+                </h5>
+                <div class="card-subtitle">@createCode(patient) </div>
+            </div>
         </div>
     }
 </div>
 
 @code {
-    
+    String createCode(Patient patient)
+    {
+        StringBuilder code = new StringBuilder();
+        code.Append(patient.IncidentNumber);
+        code.Append(" - ");
+        code.Append(patient.EstimatedAge);
+        code.Append("YO");
+        switch (patient.Gender)
+        {
+            case 1: code.Append("M"); break;
+            case 2: code.Append("F"); break;
+            default: code.Append("U"); break;
+        }
+        foreach (String condition in patient.Conditions)
+        {
+            code.Append(" - ");
+            code.Append(condition);
+        }
+        return code.ToString();
+    }
 }
