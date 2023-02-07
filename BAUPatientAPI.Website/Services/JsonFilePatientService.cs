@@ -31,9 +31,13 @@ namespace BAUPatientAPI.Website.Services
         {
             using (var jsonFileReader = File.OpenText(JsonFileName))
             {
-                var patients = JsonSerializer.Deserialize<Patient[]>(jsonFileReader.ReadToEnd(),
-                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                return patients ?? Enumerable.Empty<Patient>(); // Never returns null
+                IEnumerable<Patient> patients = (JsonSerializer.Deserialize<Patient[]>(jsonFileReader.ReadToEnd(),
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) 
+                    ?? Enumerable.Empty<Patient>());
+                // Hack method to order by newest patient
+                patients = patients.Reverse<Patient>(); 
+                // patients = patients.OrderBy<Patient, DateTime>(Func<Patient, DateTime> (p) => p.CreatedAt);
+                return patients ; // Never returns null
             }
         }
 

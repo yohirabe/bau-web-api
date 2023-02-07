@@ -9,6 +9,7 @@ namespace BAUPatientAPI.Website.Models
         public Patient(string id, string incidentNumber, int statusNumber, int estimatedAge, int gender, string[] conditions)
         {
             Id = id;
+            CreatedAt = DateTime.Now;
             IncidentNumber = incidentNumber;
             StatusNumber = statusNumber;
             EstimatedAge = estimatedAge;
@@ -17,6 +18,9 @@ namespace BAUPatientAPI.Website.Models
         }
 
         public string Id { get; set; }
+
+        [JsonPropertyName("created")]
+        public DateTime CreatedAt { get; set; }
         [JsonPropertyName("incident")]
         public string IncidentNumber { get; set; }
         [JsonPropertyName("status")]
