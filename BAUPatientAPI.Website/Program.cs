@@ -1,4 +1,6 @@
-using BAUPatientAPI.Website.Services;
+using BAUPatientAPI.Website.Context;
+using BAUPatientAPI.Website.Contracts;
+using BAUPatientAPI.Website.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddControllers();
-builder.Services.AddTransient<JsonFilePatientService>();
+builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 
 var app = builder.Build();
 

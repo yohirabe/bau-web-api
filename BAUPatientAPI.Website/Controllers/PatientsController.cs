@@ -1,5 +1,6 @@
-﻿using BAUPatientAPI.Website.Models;
-using BAUPatientAPI.Website.Services;
+﻿using BAUPatientAPI.Website.Contracts;
+using BAUPatientAPI.Website.Dto;
+using BAUPatientAPI.Website.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
@@ -13,62 +14,80 @@ namespace BAUPatientAPI.Website.Controllers
     [ApiController]
     public class PatientsController : ControllerBase
     {
-        // TODO: Replace JSON file service here with repository service when repository is implemented.
-        public PatientsController(JsonFilePatientService patientService) 
-        {
-            this.PatientService = patientService;
-        }
+        private readonly IPatientRepository _patientRepo;
 
-        public JsonFilePatientService PatientService { get; }
+        public PatientsController(IPatientRepository patientRepo) 
+        {
+            this._patientRepo = patientRepo;
+        }
 
         [HttpGet()]
-        public IEnumerable<Patient> Get()
+        public async Task<IActionResult> GetPatients()
         {
-            // returns an empty IEnumerable if there are no patients
-            return PatientService.GetPatients();
+            // TODO: error catching
+            var patients = await _patientRepo.GetPatients();
+            return Ok(patients);
         }
 
-        [HttpGet("{id}")]
-        public Patient? GetById(string id)
+
+        [HttpGet("{id}", Name = "PatientById")]
+        public async Task<IActionResult> GetPatient(int id)
         {
-            // returns null if patient wasn't found.
-            return PatientService.GetPatientById(id);
+            Patient patient = await _patientRepo.GetPatient(id);
+            if (patient is null)
+            {
+                return NotFound();
+            }
+            return Ok(patient);
         }
 
-        [HttpGet("search")]
-        public IEnumerable<Patient> GetByIncident([FromQuery] string incident)
-        {
-            return PatientService.GetPatientsByIncident(incident);
-        }
-
-        [HttpGet("incidents")]
-        public IEnumerable<string> GetIncidents()
-        {
-            return PatientService.GetIncidents();
-        }
 
         [HttpPost]
-        public ActionResult AddPatient(JsonObject body)
+        public async Task<IActionResult> CreatePatient([FromBody] PatientForCreationDto patient)
         {
-            // Get arguments from request body.
-            string incident = (string)body["incident"]!;
-            int status = (int)body["status"]!;
-            int age = (int)body["age"]!;
-            int gender = (int)body["gender"]!;
+            Patient createdPatient = await _patientRepo.CreatePatient(patient);
+            return CreatedAtRoute("PatientById", new { id = createdPatient.Id }, createdPatient);
+        }
+        //[HttpGet("{id}")]
+        //public Patient? GetById(string id)
+        //{
+        //    return PatientService.GetPatientById(id);
+        //}
+
+        //[HttpGet("search")]
+        //public IEnumerable<Patient> GetByIncident([FromQuery] string incident)
+        //{
+        //    return PatientService.GetPatientsByIncident(incident);
+        //}
+
+        //[HttpGet("incidents")]
+        //public IEnumerable<string> GetIncidents()
+        //{
+        //    return PatientService.GetIncidents();
+        //}
+
+        //[HttpPost]
+        //public ActionResult AddPatient(JsonObject body)
+        //{
+        //    // Get arguments from request body.
+        //    string incident = (string)body["incident"]!;
+        //    int status = (int)body["status"]!;
+        //    int age = (int)body["age"]!;
+        //    int gender = (int)body["gender"]!;
             
-            string[] conditions = JsonSerializer.Deserialize<string[]>( body["conditions"]!)!;
+        //    string[] conditions = JsonSerializer.Deserialize<string[]>( body["conditions"]!)!;
 
 
-            Patient patient = PatientService.AddPatient(incident, status ,age, gender, conditions);
-            return CreatedAtAction("AddPatient" ,patient);
-        }
+        //    Patient patient = PatientService.AddPatient(incident, status ,age, gender, conditions);
+        //    return CreatedAtAction("AddPatient" ,patient);
+        //}
 
-        [HttpDelete("{id}")]
-        public ActionResult DeletePatient(string id)
-        {
-            if (PatientService.DeletePatient(id)) return Ok();
-            return NotFound();
-        }
+        //[HttpDelete("{id}")]
+        //public ActionResult DeletePatient(string id)
+        //{
+        //    if (PatientService.DeletePatient(id)) return Ok();
+        //    return NotFound();
+        //}
 
     }
 }

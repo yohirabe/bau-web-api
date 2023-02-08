@@ -1,14 +1,8 @@
 ﻿@page
-@using BAUPatientAPI.Website.Components
 .Website.Pages;
 @model IndexModel
 @{
     ViewData["Title"] = "Home page";
 }
 
-@* Viewing data will be relegated soley to the dashboard application.
-<div class="d-flex">
-    @(await Html.RenderComponentAsync<PatientList>(RenderMode.ServerPrerendered))
-</div>
-*@
 <script src ="_framework/blazor.server.js"></script>
