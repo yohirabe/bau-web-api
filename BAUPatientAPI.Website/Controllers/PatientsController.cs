@@ -29,7 +29,6 @@ namespace BAUPatientAPI.Website.Controllers
             return Ok(patients);
         }
 
-
         [HttpGet("{id}", Name = "PatientById")]
         public async Task<IActionResult> GetPatient(int id)
         {
@@ -41,6 +40,20 @@ namespace BAUPatientAPI.Website.Controllers
             return Ok(patient);
         }
 
+        [HttpGet("search", Name = "PatientsByIncident")]
+        public async Task<IActionResult> GetPatientsByIncident([FromQuery] int incident)
+        {
+            var patients = await _patientRepo.GetPatientsByIncident(incident);
+            return Ok(patients);
+        }
+
+        [HttpGet("incidents", Name = "UniqueIncidents")]
+        public async Task<IActionResult> GetUniqueIncidents()
+        {
+            var incidents = await _patientRepo.GetUniqueIncidents();
+            return Ok(incidents);
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> CreatePatient([FromBody] PatientForCreationDto patient)
@@ -48,46 +61,23 @@ namespace BAUPatientAPI.Website.Controllers
             Patient createdPatient = await _patientRepo.CreatePatient(patient);
             return CreatedAtRoute("PatientById", new { id = createdPatient.Id }, createdPatient);
         }
-        //[HttpGet("{id}")]
-        //public Patient? GetById(string id)
-        //{
-        //    return PatientService.GetPatientById(id);
-        //}
 
-        //[HttpGet("search")]
-        //public IEnumerable<Patient> GetByIncident([FromQuery] string incident)
-        //{
-        //    return PatientService.GetPatientsByIncident(incident);
-        //}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePatient(int id, [FromBody] PatientForUpdateDto patient)
+        {
+            var dbPatient = await _patientRepo.GetPatient(id);
+            if (dbPatient is null) return NotFound();
+            await _patientRepo.UpdatePatient(id, patient);
+            return NoContent();
+        }
 
-        //[HttpGet("incidents")]
-        //public IEnumerable<string> GetIncidents()
-        //{
-        //    return PatientService.GetIncidents();
-        //}
-
-        //[HttpPost]
-        //public ActionResult AddPatient(JsonObject body)
-        //{
-        //    // Get arguments from request body.
-        //    string incident = (string)body["incident"]!;
-        //    int status = (int)body["status"]!;
-        //    int age = (int)body["age"]!;
-        //    int gender = (int)body["gender"]!;
-            
-        //    string[] conditions = JsonSerializer.Deserialize<string[]>( body["conditions"]!)!;
-
-
-        //    Patient patient = PatientService.AddPatient(incident, status ,age, gender, conditions);
-        //    return CreatedAtAction("AddPatient" ,patient);
-        //}
-
-        //[HttpDelete("{id}")]
-        //public ActionResult DeletePatient(string id)
-        //{
-        //    if (PatientService.DeletePatient(id)) return Ok();
-        //    return NotFound();
-        //}
-
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePatient(int id)
+        {
+            var dbPatient = await _patientRepo.GetPatient(id);
+            if (dbPatient is null) return NotFound();
+            await _patientRepo.DeletePatient(id);
+            return NoContent();
+        }
     }
 }
